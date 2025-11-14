@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hochzeit Özlem & Hanno</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bodoni 72', 'Bodoni MT', serif;
+            background-color: #ffffff;
+            color: #333;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        body.envelope-opened {
+            overflow-y: auto;
+        }
+
+        /* Envelope Animation */
+        .envelope-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: transparent;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .envelope-container::before {
+            display: none;
+        }
+
+        .wax-seal::before {
+            display: none;
+        }
+
+        .envelope-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: transform 2s ease-out;
+            z-index: 1;
+            top: 0;
+            bottom: 0;
+        }
+
+        .envelope-flap-left {
+            left: 0;
+            width: 100%;
+            transform-origin: left center;
+            transform: translateX(0);
+            background-image: url('./images/brief_links.png');
+            background-position: center;
+            background-size: cover;
+        }
+
+        .envelope-flap-right {
+            right: 0;
+            width: 100%;
+            transform-origin: right center;
+            transform: translateX(0);
+            background-image: url('./images/brief_rechts.png');
+            background-position: center;
+            background-size: cover;
+        }
+
+        .envelope.open .envelope-flap-left {
+            transform: translateX(-100%);
+        }
+
+        .envelope.open .envelope-flap-right {
+            transform: translateX(100%);
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: calc(50% - 50px);
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 2s ease-out;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        
+        .envelope.open .wax-seal {
+            transform: translate(calc(99vw - 80px), -50%);
+        }
+
+        .wax-seal img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #ffffff;
+            opacity: 1;
+            padding: 0 15px;
+        }
+
+        /* Header Section */
+        .header {
+            padding: 40px 15px 30px;
+            border-bottom: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: clamp(16px, 4vw, 20px);
+            letter-spacing: 1px;
+            color: #333;
+            margin-bottom: -10px;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .title {
+            font-size: clamp(48px, 15vw, 75px);
+            font-weight: 700;
+            letter-spacing: clamp(-2px, -0.5vw, -1px);
+            margin-bottom: 1px;
+            font-family: 'Didot', 'Bodoni MT Pro', 'Bodoni 72', serif;
+            line-height: 1;
+            text-align: left;
+        }
+
+        .header-divider {
+            width: 100%;
+            height: 1px;
+            background: #000000;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            color: #000000;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            margin-top: -3px;
+            text-align: right;
+            font-family: 'Didot';
+            font-weight: 700;
+        }
+
+        .text-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: start;
+        }
+
+        .tagline {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 0;
+            text-align: left;
+            grid-column: 2;
+            padding-left: 25px;
+        }
+
+        .tagline-turkish {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #202020;
+            text-align: right;
+            grid-column: 1;
+            grid-row: 1;
+            align-self: start;
+            margin-top: 80px;
+            padding-right: 70px;
+            margin-left: -20px;
+        }
+
+        /* Hero Image Section */
+        .hero-section {
+            padding: 40px 15px;
+            text-align: center;
+            position: relative;
+            background-image: url('./images/brautpaar_background.png');
+            background-size: contain;
+            background-position: top center;
+            background-repeat: no-repeat;
+            margin-top: -250px;
+            padding-top: 400px;
+            min-height: 500px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0);
+            z-index: 0;
+        }
+
+        .hero-image {
+            display: none;
+        }
+
+        .date-box {
+            margin-bottom: 0;
+            padding-bottom: 4px;
+            margin-top: 150px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .date-number {
+            font-size: 72px;
+            font-weight: 700;
+            line-height: 0.9;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .date-month {
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: #202020;
+            position: relative;
+            z-index: 1;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            font-weight: 700;
+        }
+
+        .date-year {
+            font-size: 24px;
+            color: #202020;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            font-weight: 700;
+        }
+
+        .date-divider {
+            width: 100%;
+            height: 1px;
+            background: #ccc;
+            margin: 0 0 25px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .names {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            margin-top: -10px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            font-weight: 700;
+            font-size: 32px;
+            letter-spacing: 0.5px;
+            color: #202020;
+        }
+
+        .names .smaller {
+            font-size: 29px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: #ccc;
+            margin: 0 0 25px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .venue-tagline {
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: #202020;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
+
+        .scroll-arrow {
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 15px solid #666;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Program Section */
+        .program-section {
+            background: #fafafa;
+            padding: 50px 30px;
+        }
+
+        .program-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            font-family: 'Bodoni 72', serif;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 90px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 100px;
+            top: 0;
+            bottom: 5px;
+            width: 12px;
+            background-image: url('./images/heart_timline.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 51px;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: -80px;
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: #666;
+        }
+        .timeline-icon img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .timeline-item:nth-child(2) .timeline-icon img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .timeline-item:nth-child(4) .timeline-icon img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .timeline-item:nth-child(6) .timeline-icon img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .timeline-time {
+            font-size: 16px;
+            font-weight: 300;
+            width: 80px;
+            margin-right: 30px;
+            padding-left: 40px;
+            color: #333;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            font-size: 16px;
+            color: #555;
+            letter-spacing: 0.5px;
+            padding-left: -50px;
+            flex: 1;
+        }
+
+        /* Location Section */
+        .location-section {
+            padding: 50px 15px;
+            text-align: center;
+        }
+
+        .location-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-family: 'Didot', 'Bodoni 72', serif;
+        }
+
+        .location-address {
+            font-size: 17px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .parking-note {
+            font-size: 13px;
+            color: #202020;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        /* Hochzeitsauto Animation */
+        .wedding-car-container {
+            width: 100%;
+            height: 80px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2px;
+        }
+
+        .wedding-car {
+            position: absolute;
+            left: 0;
+            bottom: 10px;
+            width: 110px;
+            height: 90px;
+            animation: driveCar 8s linear infinite;
+            transform: translateX(-150px);
+        }
+
+        .wedding-car img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+
+
+        @keyframes driveCar {
+            0% {
+                transform: translateX(-150px);
+            }
+            100% {
+                transform: translateX(calc(100vw + 150px));
+            }
+        }
+
+        .map-container {
+            width: 100%;
+            height: 250px;
+            background: #e8e8e8;
+            border-radius: 3px;
+            margin-bottom: 5px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            pointer-events: none;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        /* Photo Section */
+        .photo-section {
+            background: #fafafa;
+            padding: 50px 15px;
+            text-align: center;
+        }
+
+        .photo-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            font-weight: 700;
+        }
+
+        .photo-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #666;
+            margin-bottom: 30px;
+            padding: 0 15px;
+        }
+
+        .photo-button {
+            display: inline-block;
+            background: #333;
+            color: #fff;
+            padding: 14px 40px;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        .photo-button:hover {
+            background: #555;
+        }
+
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            background: #fff;
+            border: 2px solid #ddd;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 15px;
+            text-align: center;
+            background: #fff;
+        }
+
+        .footer-text {
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: #333;
+            font-family: 'Didot', 'Bodoni 72', serif;
+            font-weight: 700;
+        }
+
+        /* Parallax Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .timeline-item:nth-child(1) .timeline-icon { animation: float 3s ease-in-out infinite; }
+        .timeline-item:nth-child(2) .timeline-icon { animation: float 3s ease-in-out 0.5s infinite; }
+        .timeline-item:nth-child(3) .timeline-icon { animation: float 3s ease-in-out 1s infinite; }
+        .timeline-item:nth-child(4) .timeline-icon { animation: float 3s ease-in-out 1.5s infinite; }
+        .timeline-item:nth-child(5) .timeline-icon { animation: float 3s ease-in-out 2s infinite; }
+        .timeline-item:nth-child(6) .timeline-icon { animation: float 3s ease-in-out 2.5s infinite; }
+
+        /* Verschiebe 18:00 und Gästeempfang nach oben */
+        .timeline-item:nth-child(1) .timeline-time,
+        .timeline-item:nth-child(1) .timeline-content {
+            position: relative;
+            top: -5px;
+        }
+
+        .timeline-item:nth-child(6) .timeline-time,
+        .timeline-item:nth-child(6) .timeline-content {
+            position: relative;
+            top: -1px;
+        }
+
+        /* Smartphone Icon */
+        .camera-icon-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .camera-icon {
+            width: 120px;
+            height: 120px;
+            display: inline-block;
+            animation: floatRotated 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes floatRotated {
+            0%, 100% {
+                transform: translateY(0px) rotate(10deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(10deg);
+            }
+        }
+
+        .camera-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Blitzeffekt */
+        @keyframes flash {
+            0%, 90%, 100% {
+                opacity: 0;
+            }
+            95% {
+                opacity: 1;
+            }
+        }
+
+        .camera-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: flash 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Envelope Animation -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="envelope-flap envelope-flap-left"></div>
+            <div class="envelope-flap envelope-flap-right"></div>
+            <div class="wax-seal" id="waxSeal">
+                <img src="./images/siegel_OH.png" alt="Wax Seal">
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">DIE</div>
+            <h1 class="title">HOCHZEIT</h1>
+            <div class="header-divider"></div>
+            <div class="subtitle">AN UNSEREM BESONDEREN TAG...</div>
+            <div class="text-container">
+                <p class="tagline">
+                    Freuen wir uns gemeinsam<br>
+                    mit euch, unvergessliche<br>
+                    Erinnerungen zu schaffen!
+                </p>
+                <p class="tagline-turkish">
+                    Özel günler birlikte<br>
+                    güzel. Bizimle<br>
+                    olmanız dileğiyle.
+                </p>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-image">
+                [Hochzeitsfoto Platzhalter]
+            </div>
+            <div class="date-box">
+                <div class="date-number">29</div>
+                <div class="date-text">
+                    <div class="date-month">November</div>
+                    <div class="date-year">2025</div>
+                </div>
+            </div>
+            <div class="date-divider"></div>
+            <h2 class="names">Ö<span class="smaller">ZLEM</span> & H<span class="smaller">ANNO</span></h2>
+            <div class="divider"></div>
+            <p class="venue-tagline">Scrollen um mehr zu erfahren</p>
+            <div class="scroll-arrow"></div>
+        </div>
+
+        <!-- Program Section -->
+        <div class="program-section">
+            <h2 class="program-title">PROGRAMM</h2>
+            <div class="timeline">
+                <!-- Item 1 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="./images/icon_gaesteempfang.png" alt="Gästeempfang">
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">18:00</div>
+                    <div class="timeline-content">Gästeempfang</div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="./images/icon_brautpaar.png" alt="Erster Tanz">
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">19:00</div>
+                    <div class="timeline-content">Erster Tanz</div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="./images/icon_buffet.png" alt="Buffet">
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">20:00</div>
+                    <div class="timeline-content">Buffet</div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="./images/icon_party.png" alt="Party">
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">21:00</div>
+                    <div class="timeline-content">Party</div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="./images/icon_torte.png" alt="Hochzeitstorte">
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">22:30</div>
+                    <div class="timeline-content">Hochzeitstorte</div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="./images/icon_nochmehrparty.png" alt="Noch mehr Party">
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">23:00</div>
+                    <div class="timeline-content">Noch&nbsp;mehr&nbsp;Party!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="location-section">
+            <h3 class="location-title">Im Le Royal Catering & Events</h3>
+            <p class="location-address">
+                Hermann-Buck-Weg 9 | 22309 Hamburg
+            </p>
+            <p class="parking-note">Parkmöglichkeiten sind vorhanden.</p>
+
+            <!-- Hochzeitsauto Animation -->
+            <div class="wedding-car-container">
+                <div class="wedding-car">
+                    <img src="./images/icon_car_justmarried.png" alt="Just Married Car">
+                </div>
+            </div>
+
+            <a href="https://maps.app.goo.gl/ZauVFzYp7dJ2FQcR9" target="_blank" rel="noopener noreferrer" class="map-container">
+                <div class="map-overlay"></div>
+                <iframe
+                    src="https://www.google.com/maps?q=Le+Royal+Event+%26+Catering,+Hermann-Buck-Weg+9,+22309+Hamburg&output=embed"
+                    title="Google Maps: Le Royal Event & Catering"
+                    allowfullscreen="">
+                </iframe>
+            </a>
+            </div>
+        </div>
+
+        <!-- Photo Section -->
+        <div class="photo-section">
+            <div class="camera-icon-container">
+                <div class="camera-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Smartphone-Körper -->
+                        <rect x="30" y="15" width="40" height="70" rx="5" fill="none" stroke="#333" stroke-width="2"/>
+                        <!-- Display -->
+                        <rect x="33" y="22" width="34" height="56" rx="2" fill="none" stroke="#333" stroke-width="1.5"/>
+                        <!-- Home-Button / Kamera -->
+                        <circle cx="50" cy="82" r="2.5" fill="none" stroke="#333" stroke-width="1.5"/>
+                        <!-- Lautsprecher -->
+                        <line x1="43" y1="19" x2="57" y2="19" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+                        <!-- Kamera-Linse oben -->
+                        <circle cx="60" cy="19" r="1.5" fill="#333"/>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="photo-title">Deine Fotos der Hochzeit</h3>
+            <p class="photo-description">
+                Unter folgendem Button kannst du<br>
+                deine Fotos mit uns teilen. Tippe dafür in der<br>
+                Navigation auf "Galerie" und anschließend<br>
+                auf das "+". Es werden nur eure hochgeladenen<br>
+                Bilder sichtbar sein. Danach kannst du uns<br>
+                noch einen Eintrag ins Gästebuch hinterlassen.
+            </p>
+            <a href="https://app.mymillionsnaps.de/12e1d2bd-fa43-4e73-842b-54eb7ca5c5e4/pictures" target="_blank" rel="noopener noreferrer" class="photo-button">Hier Fotos teilen</a>
+            <div class="qr-code">
+                <img src="./images/qr_weddingsnap.png" alt="QR-Code">
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">Wir freuen uns auf euch!</p>
+        </div>
+    </div>
+    <!-- End of main content container -->
+
+    <!-- Audio Element für Hintergrundmusik -->
+    <audio id="backgroundMusic" preload="auto">
+        <source src="./audio/buray-alaz-alaz.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Audio Element
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        let musicTimer;
+        let fadeInterval;
+
+        // Funktion zum Ausfaden der Musik
+        function fadeOutMusic(duration = 3000) {
+            const startVolume = backgroundMusic.volume;
+            const fadeStep = startVolume / (duration / 50); // 50ms Intervalle
+
+            if (fadeInterval) clearInterval(fadeInterval);
+
+            fadeInterval = setInterval(() => {
+                if (backgroundMusic.volume > fadeStep) {
+                    backgroundMusic.volume -= fadeStep;
+                } else {
+                    backgroundMusic.volume = 0;
+                    backgroundMusic.pause();
+                    backgroundMusic.currentTime = 0;
+                    backgroundMusic.volume = startVolume; // Zurücksetzen für nächstes Mal
+                    clearInterval(fadeInterval);
+                }
+            }, 50);
+        }
+
+        // Envelope Animation
+        const waxSeal = document.getElementById('waxSeal');
+        const envelope = document.getElementById('envelope');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+
+        waxSeal.addEventListener('click', function() {
+            // Starte die Öffnungs-Animation
+            envelope.classList.add('open');
+
+            // Erlaube Scrollen
+            document.body.classList.add('envelope-opened');
+
+            // Setze Lautstärke auf 100% und starte die Musik
+            backgroundMusic.volume = 1.0;
+            backgroundMusic.play().catch(error => {
+                console.log('Audio playback failed:', error);
+            });
+
+            // Starte Fade-Out nach 75 Sekunden (1:15) - Fade dauert 3 Sekunden
+            if (musicTimer) clearTimeout(musicTimer);
+            musicTimer = setTimeout(() => {
+                fadeOutMusic(3000); // 3 Sekunden Fade-Out
+            }, 75000);
+
+            // Entferne den Umschlag komplett nach 2 Sekunden
+            setTimeout(() => {
+                envelopeContainer.style.display = 'none';
+            }, 2000);
+        });
+
+        // Parallax scroll effect für Icons
+        window.addEventListener('scroll', function() {
+            const icons = document.querySelectorAll('.timeline-icon');
+            const scrollY = window.scrollY;
+
+            icons.forEach((icon, index) => {
+                const speed = 0.05 + (index * 0.02);
+                const yPos = -(scrollY * speed);
+                icon.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
